@@ -10,11 +10,31 @@
 
 <body>
   <img id="img" src="" alt="" />
+  <div id="info"></div>
   <script>
+    /** 查询二维码状态 */
+    function queryStatus (id) {
+      axios.get(`http://localhost:3000/qrcode/check?id=${id}`).then(res => {
+        const { status } = res.data;
+
+        let content = ''
+        switch (status) {
+          case 'noscan': content = '未扫码'; break;
+          case 'scan-wait-confirm': content = '已扫码，等待确认'; break;
+          case 'scan-confirm': content = '已确认'; break;
+          case 'scan-cancel': content = '已取消'; break;
+        }
+        document.getElementById('info').html = content;
+
+        if (status === 'noscan' || status === 'scan-wait-confirm') {
+          setTimeout(() => queryStatus(id), 1000);
+        }
+      })
+    }
     axios.get('http://localhost:3000/qrcode/generate').then(res => {
       document.getElementById('img').src = res.data.img;
 
-      // queryStatus(res.data.qrcode_id);
+      queryStatus(res.data.qrcode_id);
     })
   </script>
 </body>
