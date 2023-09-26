@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { randomUUID } from 'crypto';
 import * as qrcode from 'qrcode';
@@ -50,5 +50,34 @@ export class AppController {
   @Get('qrcode/check')
   async check(@Query('id') id: string) {
     return map.get(`qrcode_${id}`);
+  }
+
+  @Get('qrcode/scan')
+  async scan(@Query('id') id: string) {
+    const info = map.get(`qrcode_${id}`);
+    if (!info) {
+      throw new BadRequestException('二维码已过期');
+    }
+    info.status = 'scan-wait-confirm';
+    return 'success';
+  }
+
+  @Get('qrcode/confirm')
+  async confirm(@Query('id') id: string) {
+    const info = map.get(`qrcode_${id}`);
+    if (!info) {
+      throw new BadRequestException('二维码已过期');
+    }
+    info.status = 'scan-confirm';
+    return 'success';
+  }
+  @Get('qrcode/cancel')
+  async cancel(@Query('id') id: string) {
+    const info = map.get(`qrcode_${id}`);
+    if (!info) {
+      throw new BadRequestException('二维码已过期');
+    }
+    info.status = 'scan-cancel';
+    return 'success';
   }
 }
