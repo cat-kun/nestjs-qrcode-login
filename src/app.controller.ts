@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { randomUUID } from 'crypto';
 import * as qrcode from 'qrcode';
@@ -45,5 +45,10 @@ export class AppController {
       qrcode_id: uuid,
       img: dataUrl,
     };
+  }
+
+  @Get('qrcode/check')
+  async check(@Query('id') id: string) {
+    return map.get(`qrcode_${id}`);
   }
 }
