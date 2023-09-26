@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>扫码登录</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/axios@1.5.0/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <img id="img" src="" alt="" />
+  <script>
+    axios.get('http://localhost:3000/qrcode/generate').then(res => {
+      document.getElementById('img').src = res.data.img;
+
+      // queryStatus(res.data.qrcode_id);
+    })
+  </script>
+</body>
+
+</html>
