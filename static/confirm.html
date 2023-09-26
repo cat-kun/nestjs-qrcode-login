@@ -38,6 +38,26 @@
   </div>
   <button id="confirm">确认登录</button>
   <button id="cancel">取消</button>
+  <script>
+    const params = new URLSearchParams(location.search.slice(1))
+    const id = params.get('id')
+
+    axios.get(`http://localhost:3000/qrcode/scan?id=${id}`).catch(e => {
+      alert('二维码已过期');
+    });
+
+    document.getElementById('confirm').addEventListener('click', () => {
+      axios.get(`http://localhost:3000/qrcode/confirm?id=${id}`).catch(e => {
+        alert('二维码已过期');
+      });
+    });
+
+    document.getElementById('cancel').addEventListener('click', () => {
+      axios.get(`http://localhost:3000/qrcode/cancel?id=${id}`).catch(e => {
+        alert('二维码已过期');
+      });
+    });
+  </script>
 </body>
 
 </html>

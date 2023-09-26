@@ -24,7 +24,7 @@
           case 'scan-confirm': content = '已确认'; break;
           case 'scan-cancel': content = '已取消'; break;
         }
-        document.getElementById('info').html = content;
+        document.getElementById('info').textContent = content;
 
         if (status === 'noscan' || status === 'scan-wait-confirm') {
           setTimeout(() => queryStatus(id), 1000);
