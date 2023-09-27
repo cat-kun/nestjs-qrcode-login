@@ -119,4 +119,17 @@ export class AppController {
       msg: '',
     };
   }
+
+  // 用户信息
+  @Get('userInfo')
+  async userInfo(@Headers('Authorization') auth: string) {
+    try {
+      const [, token] = auth.split(' ');
+      const info = await this.jwtService.verify(token);
+      const user = this.users.find((item) => item.id === info.userId);
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException('token 过期，请重新登录');
+    }
+  }
 }
