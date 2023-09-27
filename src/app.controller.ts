@@ -1,7 +1,15 @@
-import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Inject,
+  Query,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { randomUUID } from 'crypto';
 import * as qrcode from 'qrcode';
+import { JwtService } from '@nestjs/jwt';
 const map = new Map<string, QrCodeInfo>();
 
 interface QrCodeInfo {
@@ -79,5 +87,36 @@ export class AppController {
     }
     info.status = 'scan-cancel';
     return 'success';
+  }
+
+  // 登录
+  @Inject(JwtService)
+  private jwtService: JwtService;
+
+  private users = [
+    { id: 1, username: '迪丽热巴', password: 'sdjksdj343434' },
+    { id: 2, username: '古力娜扎', password: '5445dpp3epe' },
+  ];
+
+  @Get('login')
+  async login(
+    @Query('username') username: string,
+    @Query('password') password: string,
+  ) {
+    const user = this.users.find((item) => item.username === username);
+    if (!user) {
+      throw new UnauthorizedException('用户不存在');
+    }
+    if (user.password !== password) {
+      throw new UnauthorizedException('密码错误');
+    }
+
+    return {
+      code: 200,
+      data: {
+        token: await this.jwtService.sign({ userId: user[0].id }),
+      },
+      msg: '',
+    };
   }
 }
